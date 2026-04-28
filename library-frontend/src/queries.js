@@ -38,7 +38,9 @@ export const CREATE_BOOK = gql`
       genres: $genres
     ) {
       title
-      author
+      author {
+        name
+      }
       genres
       published
     }
@@ -49,6 +51,14 @@ export const EDIT_AUTHOR_BIRDTHDAY = gql`
   mutation editAuthBorn($name: String!, $born: Int!) {
     editAuthor(name: $name, setBornTo: $born) {
       name
+    }
+  }
+`;
+
+export const LOGIN = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
     }
   }
 `;
