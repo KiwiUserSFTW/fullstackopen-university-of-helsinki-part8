@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 // components
 import Authors from "./components/Authors";
-import Books from "./components/Books";
+import Books from "./components/Books/Books";
 import NewBook from "./components/NewBook";
 import Login from "./components/Login";
 

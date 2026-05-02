@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS } from "../queries";
+import { CREATE_BOOK, ALL_AUTHORS } from "../queries";
 
 const NewBook = () => {
   const [title, setTitle] = useState("");
@@ -10,7 +10,21 @@ const NewBook = () => {
   const [genres, setGenres] = useState([]);
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, { data: { addBook } }) => {
+      // https://www.apollographql.com/docs/react/data/mutations#the-update-function
+      cache.modify({
+        fields: {
+          allBooks(existing = [], { args }) {
+            if (args?.genre && !addBook.genres.includes(args.genre)) {
+              return existing;
+            }
+
+            return [...existing, addBook];
+          },
+        },
+      });
+    },
   });
 
   const submit = async (event) => {
