@@ -20,6 +20,9 @@ const Bookfilters = ({ setFilter }) => {
           {filter}
         </button>
       ))}
+      <button key="all genres" onClick={() => setFilter(null)}>
+        all genres
+      </button>
     </div>
   );
 };
