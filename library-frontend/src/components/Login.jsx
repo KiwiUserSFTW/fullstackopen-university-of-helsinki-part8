@@ -1,5 +1,5 @@
 // react & router
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 // server
@@ -11,6 +11,7 @@ import { useSetToken } from "../hooks/useToken";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const setToken = useSetToken();
   const navigate = useNavigate();
@@ -19,11 +20,13 @@ const Login = () => {
     onCompleted: (data) => {
       const token = data.login.value;
       setToken(token);
+      setError(null);
       localStorage.setItem("library-user-token", token);
       navigate("/");
     },
     onError: (error) => {
       console.error(error);
+      setError("Login failed");
     },
   });
 
@@ -37,26 +40,39 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  }, [error]);
+
   return (
     <div>
       <form onSubmit={submit}>
         <div>
-          username
-          <input
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <label>
+            username
+            <input
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </label>
         </div>
         <div>
-          password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <label>
+            password
+            <input
+              type="password"
+              value={password}
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </label>
         </div>
         <button type="submit">login</button>
       </form>
+      {error ? <div style={{ color: "red" }}> {error} </div> : ""}
     </div>
   );
 };
