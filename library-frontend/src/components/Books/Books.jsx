@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { ALL_BOOKS, ALL_BOOKS_GENRES } from "../../queries";
+
 import Bookfilters from "./BookFilters/Bookfilters";
+import BooksTable from "./BooksTable/BooksTable";
 
 const Books = () => {
   const [filter, setFilter] = useState(null);
@@ -17,22 +19,7 @@ const Books = () => {
       <h2>books</h2>
       {filter && <h3> in genre: {filter}</h3>}
       <Bookfilters setFilter={setFilter} />
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
-          </tr>
-          {books.data.allBooks.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <BooksTable books={books.data.allBooks} />
     </div>
   );
 };

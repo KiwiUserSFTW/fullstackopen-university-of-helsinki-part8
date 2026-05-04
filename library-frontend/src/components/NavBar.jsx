@@ -18,6 +18,7 @@ export function NavBar() {
       {token ? (
         <>
           <button onClick={() => navigate("/newBook")}>add book</button>
+          <button onClick={() => navigate("/recommend")}>recommend</button>
           <Logout />
         </>
       ) : (
