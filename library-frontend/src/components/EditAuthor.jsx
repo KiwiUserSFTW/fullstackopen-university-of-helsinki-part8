@@ -27,23 +27,25 @@ const EditAuthor = ({ authors }) => {
         <div>
           name
           <select
-            name="authors"
+            name="name"
             id="author-select"
             onChange={({ target }) => setName(target.value)}
           >
-            {authors.map(({ name }) => (
-              <option value={name} key={name}>
+            {authors.map(({ name, id }) => (
+              <option value={name} key={id}>
                 {name}
               </option>
             ))}
           </select>
         </div>
         <div>
-          born
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
+          <label>
+            born
+            <input
+              value={born}
+              onChange={({ target }) => setBorn(target.value)}
+            />
+          </label>
         </div>
         <button type="submit">update author</button>
       </form>

@@ -1,10 +1,14 @@
 import { useQuery } from "@apollo/client/react";
+import { useContext } from "react";
 
 import { ALL_AUTHORS } from "../queries";
 import EditAuthor from "./EditAuthor";
+import TokenContext from "../context/TokenContext";
 
 const Authors = () => {
   const result = useQuery(ALL_AUTHORS);
+  const { token } = useContext(TokenContext);
+
   if (result.loading) return <> loading ...</>;
 
   const authors = result.data.allAuthors;
@@ -27,8 +31,7 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
-
-      <EditAuthor authors={authors} />
+      {token && <EditAuthor authors={authors} />}
     </div>
   );
 };
