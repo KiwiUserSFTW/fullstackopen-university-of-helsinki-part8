@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { ALL_BOOKS, ALL_BOOKS_GENRES } from "../../queries";
 
-import Bookfilters from "./BookFilters/Bookfilters";
+import Bookfilters from "./BookFilters/BookFilters";
 import BooksTable from "./BooksTable/BooksTable";
 
 const Books = () => {
