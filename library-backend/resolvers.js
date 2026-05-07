@@ -1,6 +1,9 @@
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
 
+// NOTE Redis Pub/Sub prod alternative
+const { PubSub } = require("graphql-subscriptions");
+
 const Book = require("./models/book");
 const Author = require("./models/author");
 const User = require("./models/user");
@@ -14,6 +17,8 @@ const userCheck = (user) => {
     });
   }
 };
+
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -197,7 +202,7 @@ const resolvers = {
       const book = new Book({ ...args, author: author.id });
 
       try {
-        return (await book.save()).populate("author");
+        await book.save();
       } catch (error) {
         throw new GraphQLError(`Adding book failed: ${error.message}`, {
           extensions: {
@@ -206,6 +211,10 @@ const resolvers = {
           },
         });
       }
+      await book.populate("author");
+
+      pubsub.publish("BOOK_ADDED", { bookAdded: book });
+      return book;
     },
     editAuthor: async (root, args, { currentUser }) => {
       userCheck(currentUser);
@@ -239,6 +248,11 @@ const resolvers = {
           },
         });
       }
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator("BOOK_ADDED"),
     },
   },
 };
