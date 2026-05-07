@@ -13,6 +13,9 @@ import { useReducer } from "react";
 import tokenReducer from "./reducers/tokenReducer";
 import TokenContext from "./context/TokenContext";
 
+// utils
+import updateBookCache from "./utils/updateBookCache";
+
 const App = () => {
   const [token, dispatch] = useReducer(
     tokenReducer,
@@ -20,8 +23,11 @@ const App = () => {
   );
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      alert(`new book ${data.data.bookAdded?.title} addded`);
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded;
+      alert(`new book ${addedBook.title} addded`);
+
+      updateBookCache(client.cache, addedBook);
     },
     onError: (error) => {
       console.error(error);
