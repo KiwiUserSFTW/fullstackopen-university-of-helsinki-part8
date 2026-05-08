@@ -32,6 +32,10 @@ const typeDefs = /* GraphQL */ `
     allAuthors: [Author!]!
   }
 
+  type Author {
+    bookCount: Int!
+  }
+
   type Mutation {
     _resetDatabase: Boolean
     createUser(username: String!, favoriteGenre: String!): User

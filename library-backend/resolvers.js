@@ -4,9 +4,13 @@ const jwt = require("jsonwebtoken");
 // NOTE Redis Pub/Sub prod alternative
 const { PubSub } = require("graphql-subscriptions");
 
+const { authorBooksLoaderCreator } = require("./loaders");
+
 const Book = require("./models/book");
 const Author = require("./models/author");
 const User = require("./models/user");
+
+const authorBooksLoader = authorBooksLoaderCreator(Book);
 
 const userCheck = (user) => {
   if (!user) {
@@ -115,17 +119,17 @@ const resolvers = {
     },
     allAuthors: async () => {
       try {
-        const books = await Book.find({});
-        const authors = await Author.find({});
-
-        return authors.map((author) => {
-          const bookCount = books.filter(
-            (book) => String(book.author) === String(author._id),
-          ).length;
-
-          const { _id, ...args } = author.toObject();
-          return { ...args, bookCount, id: _id };
-        });
+        return await Author.find({});
+        // old implementation without n+1 problem
+        // const books = await Book.find({});
+        // const authors = await Author.find({});
+        // return authors.map((author) => {
+        //   const bookCount = books.filter(
+        //     (book) => String(book.author) === String(author._id),
+        //   ).length;
+        //   const { _id, ...args } = author.toObject();
+        //   return { ...args, bookCount, id: _id };
+        // });
       } catch (error) {
         throw new GraphQLError(`Failed to fetch books ${error.message}`, {
           extensions: {
@@ -134,6 +138,11 @@ const resolvers = {
           },
         });
       }
+    },
+  },
+  Author: {
+    bookCount: async (root) => {
+      return await authorBooksLoader.load(root._id);
     },
   },
   Mutation: {
@@ -223,7 +232,7 @@ const resolvers = {
         const updatedAuthor = await Author.findOneAndUpdate(
           { name: args.name },
           { born: args.setBornTo },
-          { returnDocument: "after" },
+          { returnDocument: "after" }
         );
 
         if (!updatedAuthor) {
